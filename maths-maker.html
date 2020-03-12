@@ -9,35 +9,53 @@
     <title>Maths Maker</title>
   </head>
   <body>
-	<div class="container-fluid mt-3">
-	<form class="form-inline d-print-none">
-	  
-	  <label class="my-1 mr-2 sr-only" for="operation">Operation</label>
-	  <select id="operation" class="form-control mb-2 mr-sm-2">
-		<option>addition</option>
-		<option>subtraction</option>
-		<option>multiplication</option>
-		<option selected="selected">division</option>
-	  </select>
-	  
-	  <label class="my-1 mr-2 sr-only" for="min">Minimum</label>
-	  <input type="number" min="1" max="12" class="form-control mb-2 mr-sm-2" id="min" value="1">
-	  
-	  <label class="sr-only" for="max">Maximum</label>
-	  <input type="number" min="1" max="12" class="form-control mb-2 mr-sm-2" id="max" value="12">
-	  
-	  <label class="sr-only" for="max">Operations</label>
-	  <input type="number" min="1" max="5" class="form-control mb-2 mr-sm-2" id="numbers" value="3">
-	  	  
-	  <label class="sr-only" for="total">Problems</label>
-	  <input type="number" min="1" max="100" class="form-control mb-2 mr-sm-2" id="total" value="50">
-	  
-	  <button type="submit" class="btn btn-primary mb-2">Submit</button>
-	</form>
-	<div id="problems" class="row" style="page-break-after:always">
-	</div>
-	<div id="answers" class="row">
-	</div>
+	<div class="container mt-3">
+		<form class="d-print-none">
+			<div class="form-row">
+				<div class="input-group mb-3 col-12">
+				  <div class="input-group-prepend">
+					<label class="input-group-text" for="inputGroupSelect01">Operator</label>
+				  </div>
+				  <select class="custom-select" id="operator">
+					<option>addition</option>
+					<option>subtraction</option>
+					<option>multiplication</option>
+					<option selected="selected">division</option>
+				  </select>
+				</div>	
+				<div class="input-group mb-3 col-12 col-sm-6">
+				  <div class="input-group-prepend">
+					<span class="input-group-text" id="basic-addon3">Numbers</span>
+				  </div>
+				  <input type="number" min="1" max="12" class="form-control" id="numbers" value="3">
+				</div>
+				<div class="input-group mb-3 col-12 col-sm-6">
+				  <div class="input-group-prepend">
+					<span class="input-group-text" id="basic-addon3">Questions</span>
+				  </div>
+				  <input type="number" min="1" max="50" class="form-control" id="total" value="50">
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="input-group mb-3 col-12 col-sm-6">
+				  <div class="input-group-prepend">
+					<span class="input-group-text" id="basic-addon3">Minimum</span>
+				  </div>
+				  <input type="number" min="1" max="12" class="form-control" id="min" value="1">
+				</div>
+				
+				<div class="input-group mb-3 col-12 col-sm-6">
+				  <div class="input-group-prepend">
+					<span class="input-group-text" id="basic-addon3">Maximum</span>
+				  </div>
+				  <input type="number" min="1" max="12" class="form-control" id="max" value="12">
+				</div>
+			</div>
+			<button type="submit" class="btn btn-primary btn-block">Create Worksheets</button>
+			<button id="print" type="button" class="btn btn-primary btn-block" disabled="disabled">Print</button>
+		</form>
+		<div id="problems" class="row" style="page-break-after:always"></div>
+		<div id="answers" class="row d-none d-print-block"></div>
 	</div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -97,15 +115,18 @@
 		e.preventDefault();
 		var html = "";
 		var answersHtml = "";
-		var problems = createProblems($("#operation").val(), Number($("#min").val()), Number($("#max").val()), Number($("#numbers").val()), Number($("#total").val()))
+		var problems = createProblems($("#operator").val(), Number($("#min").val()), Number($("#max").val()), Number($("#numbers").val()), Number($("#total").val()))
 		for ( i = 0; i < problems.length; ++i) {
 			var problem = problems[i];
-			html += "<p class=\"lead col-12 col-md-6 col-lg-4 my-2\"><strong>" + (i+1) + ".</strong> " + problem.prompt + " = </p>"
-			answersHtml += "<div class=\"col-12 col-md-6 col-lg-4 my-2\">" + (i+1) + ". " + problem.prompt + " = " + problem.answer + "</div>"
+			html        += "<p class=\"lead col-12 col-sm-6 col-lg-4 my-2\"><strong>" + (i+1) + ".</strong> " + problem.prompt + " = </p>"
+			answersHtml += "<p class=\"lead col-12 col-sm-6 col-lg-4 my-2\"><strong>" + (i+1) + ".</strong> " + problem.prompt + " = " + problem.answer + "</p>"
 		}
 		$("#problems").html(html);
 		$("#answers").html(answersHtml);
-	})
+		$("#print").prop("disabled","");
+		$("#print").focus();
+	});
+	$("#print").click(e => window.print());
 	</script>
   </body>
 </html>
