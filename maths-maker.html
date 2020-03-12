@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Maths Maker</title>
+  </head>
+  <body>
+	<div class="container-fluid mt-3">
+	<form class="form-inline d-print-none">
+	  
+	  <label class="my-1 mr-2 sr-only" for="operation">Operation</label>
+	  <select id="operation" class="form-control mb-2 mr-sm-2">
+		<option>addition</option>
+		<option>subtraction</option>
+		<option>multiplication</option>
+		<option selected="selected">division</option>
+	  </select>
+	  
+	  <label class="my-1 mr-2 sr-only" for="min">Minimum</label>
+	  <input type="number" min="1" max="12" class="form-control mb-2 mr-sm-2" id="min" value="1">
+	  
+	  <label class="sr-only" for="max">Maximum</label>
+	  <input type="number" min="1" max="12" class="form-control mb-2 mr-sm-2" id="max" value="12">
+	  
+	  <label class="sr-only" for="max">Operations</label>
+	  <input type="number" min="1" max="5" class="form-control mb-2 mr-sm-2" id="numbers" value="3">
+	  	  
+	  <label class="sr-only" for="total">Problems</label>
+	  <input type="number" min="1" max="100" class="form-control mb-2 mr-sm-2" id="total" value="50">
+	  
+	  <button type="submit" class="btn btn-primary mb-2">Submit</button>
+	</form>
+	<div id="problems" class="row" style="page-break-after:always">
+	</div>
+	<div id="answers" class="row">
+	</div>
+	</div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	<script>
+	function createNumbers(min, max, numbers) {
+		var values = []
+		for ( j = 0; j < numbers; ++j ) {
+			values.push(Math.floor((Math.random() * max) + min));
+		}
+		return values;
+	}
+	function createProblems(operation, min, max, numbers, numberOfProblems) {
+		var problems = [];
+		for ( i = 0; i < numberOfProblems; ++i ) {
+			switch(operation) {
+			case "addition": 
+				var values = createNumbers(min, max, numbers);
+				var answer = values.reduce((t,v) => t + v)
+				var prompt = values.join(" &plus; ")
+				break;
+			case "multiplication": 
+				var values = createNumbers(min, max, numbers);
+				while ( values.reduce((t,v) => t * v) > 144 ) {
+					values = createNumbers(min, max, numbers);
+				}
+				var answer = values.reduce((t,v) => t * v)
+				var prompt = values.join("  &times;  ")
+				break;
+			case "subtraction": 
+				var values = createNumbers(min, max, numbers);
+				var ordinal = Math.floor((Math.random() * 2) + 0);
+				var answer = values[ordinal];
+				values[ordinal] = values.reduce((t,v) => t + v);
+				values.sort((a,b) => b - a);
+				var prompt = values.join("  &minus;  ")
+				break;
+			case "division": 
+				var values = createNumbers(min, max, numbers);
+				while ( values.reduce((t,v) => t * v) > 144 ) {
+					values = createNumbers(min, max, numbers);
+				}
+				var ordinal = Math.floor((Math.random() * 2) + 0);
+				var answer = values[ordinal];
+				values[ordinal] = values.reduce((t,v) => t * v);
+				values.sort((a,b) => b - a);
+				var prompt = values.join("  &div;  ")
+				break;
+			}
+			problems.push({ prompt: prompt, answer: answer});
+		}
+		return problems;
+	}
+	$("form").submit(e => {
+		e.preventDefault();
+		var html = "";
+		var answersHtml = "";
+		var problems = createProblems($("#operation").val(), Number($("#min").val()), Number($("#max").val()), Number($("#numbers").val()), Number($("#total").val()))
+		for ( i = 0; i < problems.length; ++i) {
+			var problem = problems[i];
+			html += "<p class=\"lead col-12 col-md-6 col-lg-4 my-2\"><strong>" + (i+1) + ".</strong> " + problem.prompt + " = </p>"
+			answersHtml += "<div class=\"col-12 col-md-6 col-lg-4 my-2\">" + (i+1) + ". " + problem.prompt + " = " + problem.answer + "</div>"
+		}
+		$("#problems").html(html);
+		$("#answers").html(answersHtml);
+	})
+	</script>
+  </body>
+</html>
