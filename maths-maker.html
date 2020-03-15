@@ -66,15 +66,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 	<script>
 	const NUMBERS_IN_A_TIMES_TABLE = 12
-	function numberIsDivisibleByTimesTable(sum, min, max) {
-	  for ( i = max; i <= max ; ++i ) {
-	    var division = (sum/i)
-		if ( division <= NUMBERS_IN_A_TIMES_TABLE && Number.isInteger(division) ) {
-		  return true;
-		}
-	  }
-      return false;
-	}
 	function createNumbers(min, max, numbers) {
 		var step = Math.ceil(max/numbers);
 		var values = []
