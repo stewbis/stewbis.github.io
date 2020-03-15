@@ -27,13 +27,13 @@
 				  <div class="input-group-prepend">
 					<span class="input-group-text" id="basic-addon3">Numbers</span>
 				  </div>
-				  <input type="number" min="1" max="12" class="form-control" id="numbers" value="3">
+				  <input type="number" min="2" max="5" class="form-control" id="numbers" value="3">
 				</div>
 				<div class="input-group mb-3 col-12 col-sm-6">
 				  <div class="input-group-prepend">
 					<span class="input-group-text" id="basic-addon3">Questions</span>
 				  </div>
-				  <input type="number" min="1" max="50" class="form-control" id="total" value="50">
+				  <input type="number" min="1" max="100" class="form-control" id="total" value="50">
 				</div>
 			</div>
 			<div class="form-row">
@@ -65,14 +65,38 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 	<script>
+	const NUMBERS_IN_A_TIMES_TABLE = 12
+	function numberIsDivisibleByTimesTable(sum, min, max) {
+	  for ( i = max; i <= max ; ++i ) {
+	    var division = (sum/i)
+		if ( division <= NUMBERS_IN_A_TIMES_TABLE && Number.isInteger(division) ) {
+		  return true;
+		}
+	  }
+      return false;
+	}
 	function createNumbers(min, max, numbers) {
+		var step = Math.ceil(max/numbers);
 		var values = []
-		for ( j = 0; j < numbers; ++j ) {
-			values.push(Math.floor((Math.random() * max) + min));
+		for ( j = 1; j <= numbers; ++j ) {
+			values[j-1] = Math.floor((Math.random() * (j*step)) + min);
 		}
 		return values;
 	}
 	function createProblems(operation, min, max, numbers, numberOfProblems) {
+	    
+		// Limit to the maxium times table size
+		var upper = max * NUMBERS_IN_A_TIMES_TABLE;
+		
+		// Limit valid numbers to only those which are a value in a times table
+		var valid = []
+		valid.fill(false, 0, upper)
+		for ( var i = min; i <= max; ++i) {
+		  for ( var j = 1; j < NUMBERS_IN_A_TIMES_TABLE; ++j ) {
+			valid[i*j] = true
+		  }
+		}
+		
 		var problems = [];
 		for ( i = 0; i < numberOfProblems; ++i ) {
 			switch(operation) {
@@ -83,10 +107,12 @@
 				break;
 			case "multiplication": 
 				var values = createNumbers(min, max, numbers);
-				while ( values.reduce((t,v) => t * v) > 144 ) {
+				var sum = values.reduce((t,v) => t * v);
+				while ( sum > upper || valid[sum] == false) {
 					values = createNumbers(min, max, numbers);
+					sum = values.reduce((t,v) => t * v);
 				}
-				var answer = values.reduce((t,v) => t * v)
+				var answer = sum;
 				var prompt = values.join("  &times;  ")
 				break;
 			case "subtraction": 
@@ -99,12 +125,14 @@
 				break;
 			case "division": 
 				var values = createNumbers(min, max, numbers);
-				while ( values.reduce((t,v) => t * v) > 144 ) {
+				var sum = values.reduce((t,v) => t * v);
+				while ( valid[sum] === undefined || valid[sum] == false) {
 					values = createNumbers(min, max, numbers);
+					sum = values.reduce((t,v) => t * v);
 				}
 				var ordinal = Math.floor((Math.random() * 2) + 0);
 				var answer = values[ordinal];
-				values[ordinal] = values.reduce((t,v) => t * v);
+				values[ordinal] = sum;
 				values.sort((a,b) => b - a);
 				var prompt = values.join("  &div;  ")
 				break;
